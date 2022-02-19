@@ -48,7 +48,7 @@ def create_app():
         identity = get_jwt_identity()
         access_token = create_access_token(identity=identity)
         response = jsonify({'test':'test'})
-        set_access_cookies(response)
+        set_access_cookies(response, access_token)
         
         return response
 

@@ -47,7 +47,7 @@ class Login(MethodView):
         # if username != 'test' and password != 'test':
         #     abort(404, message="User not found.")
 
-        access_token = create_access_token(identity=username)
+        access_token = create_access_token(identity=username, fresh=True)
         refresh_token = create_refresh_token(identity=username)
         
         response = jsonify({'test':'test'})
