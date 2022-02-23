@@ -43,9 +43,7 @@ class Login(MethodView):
 
         username = data['username']
         password = data['password']
-        # return username
-        # if username != 'test' and password != 'test':
-        #     abort(404, message="User not found.")
+        
 
         access_token = create_access_token(identity=username, fresh=True)
         refresh_token = create_refresh_token(identity=username)
@@ -53,19 +51,28 @@ class Login(MethodView):
         response = jsonify({'test':'test'})
         set_access_cookies(response, access_token)
         set_refresh_cookies(response, refresh_token)
-        # print(dir(response))
-        # print(response.headers)
-        # response.set_cookie("access", access_token)
-        # response.set_cookie("refresh", refresh_token)
+        
         return response
-        # return jsonify(access_token=access_token, refresh_token=refresh_token)
+        
 
 @bp.post("/logout")
 def logout():
     response = jsonify({"msg":"logout goods"})
+
+    # set_access_cookies(response, 'loggedout')
+    # set_refresh_cookies(response, 'loggedout')
     unset_jwt_cookies(response)
     return response
 
+@bp.post("/refresh")
+@jwt_required(refresh=True)
+def test():
+    identity = get_jwt_identity()
+    access_token = create_access_token(identity=identity, fresh=False)
+    response = jsonify({'test':'test'})
+    set_access_cookies(response, access_token)
+    
+    return response
 
 @bp.route("/protected")
 class Protect(MethodView):

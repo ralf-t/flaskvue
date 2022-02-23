@@ -41,15 +41,29 @@ def create_app():
         # return "hello world"
         return {'msg':'nice'}
 
+    @app.post('/check-token')
+    def check_token():
+        try:
+            verify_jwt_in_request()
+            return {'msg':get_jwt_identity()}
+        except:
+            return {'msg':'hello'}
 
     @app.post("/refresh")
     @jwt_required(refresh=True)
     def test():
         identity = get_jwt_identity()
-        access_token = create_access_token(identity=identity)
+        access_token = create_access_token(identity=identity, fresh=False)
         response = jsonify({'test':'test'})
         set_access_cookies(response, access_token)
         
+        return response
+
+    @app.post("/protected-fresh")
+    @jwt_required(fresh=True)
+    def protected_fresh():
+        identity = get_jwt_identity()
+        response = jsonify({'user':identity})
         return response
 
     return app
